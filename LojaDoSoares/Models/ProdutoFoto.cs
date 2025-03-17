@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LojaDoSoares.Models;
 
+[Table("ProdutoFoto")]
 public class ProdutoFoto
 {
     [Key]

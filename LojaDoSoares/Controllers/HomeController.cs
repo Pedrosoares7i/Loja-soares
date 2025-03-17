@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using LojaDoSoares.Models;
 using LojaDoSoares.Data;
 using Microsoft.EntityFrameworkCore;
+using LojaDoSoares.ViewModels;
 
 namespace LojaDoSoares.Controllers;
 
@@ -25,6 +26,31 @@ public class HomeController : Controller
         .Include(p => p.Fotos)
         .ToList();
         return View(produtos);
+    }
+
+    public IActionResult Produto (int id)
+    {
+        ViewData["Carrinho"] = 3;
+        // Pesquisa do Produto clicado
+        Produto produto = _db.Produtos
+        .Where(p => p.Id == id)
+        .Include(p => p.Fotos)
+        .Include(p => p.Categoria)
+        .SingleOrDefault();
+        // Lista de Produto da mesma categoria
+         List<Produto> produtos = _db.Produtos
+        .Where(p => p.Id != id && p.CategoriaId == produto.CategoriaId)
+        .Include(p => p.Fotos)
+        .Take(4).ToList();
+
+        // Agrupar o produto e os semelhantes
+        ProdutoVM produtoVM = new()
+        {
+            Produto = produto,
+            Semelhantes = produtos
+        };
+
+        return View(produtoVM);
     }
 
     public IActionResult Privacy()
